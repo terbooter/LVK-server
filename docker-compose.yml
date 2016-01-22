@@ -1,0 +1,11 @@
+lvkserver:
+  build: .
+  volumes:
+    - ./flvs:/flvs
+  ports:
+    - "888:80"
+    - "1937:1935"
+  log_driver: "json-file"
+  log_opt:
+    max-size: "50m"
+    max-file: "100"
