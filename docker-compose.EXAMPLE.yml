@@ -1,3 +1,6 @@
+# Set custom properties and
+# rename this file to docker-compose.yml
+# or use docker-compose -f option
 lvkserver:
   build: .
   volumes:
