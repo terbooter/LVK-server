@@ -12,3 +12,5 @@ lvkserver:
   log_opt:
     max-size: "50m"
     max-file: "100"
+  environment:
+    -  SERVICE_1935_NAME=lvk_server_0
