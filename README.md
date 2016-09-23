@@ -1,6 +1,6 @@
 #Live Video Kit server
 This microservice is part of Live Video Kit (LVK).
-LVK helps translate live video RTMP stream
+LVK helps stream live video in RTMP format
 LVK consists of 3 parts:
 * [**LVK-server**](https://github.com/terbooter/LVK-server) Based on nginx rtmp module
 * [**LVK-client**](https://github.com/terbooter/LVK-client) Has two adobe flash files (publisher.swf and player.swf)
@@ -19,4 +19,4 @@ LVK consists of 3 parts:
     -  SERVICE_1935_NAME=lvk_server_0
 ```
 * Run `docker-compose up -d` will build docker image and start container in background
-* Wath stats by URL`http://xx.xx.xx.xx:888/stats`
+* Watch stats by URL`http://xx.xx.xx.xx:888/stats`
