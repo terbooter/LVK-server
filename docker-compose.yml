@@ -1,0 +1,16 @@
+lvkserver:
+  build: ./nginx
+  volumes:
+    - ./flvs:/flvs
+  log_driver: "json-file"
+  log_opt:
+    max-size: "50m"
+    max-file: "100"
+  links:
+    - node
+  environment:
+    -  SERVICE_1935_NAME=lvk_server_0
+
+node:
+  build: ./nodejs
+  restart: always

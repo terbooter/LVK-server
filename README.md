@@ -11,9 +11,16 @@ LVK consists of 3 parts:
 * `cd /docker-data`
 * `git clone https://github.com/terbooter/LVK-server.git`
 * `cd LVK-server`
-* `cp docker-compose.EXAMPLE.yml docker-compose.yml`
-* Open `docker-compose.yml` in editor
-* Edit `SERVICE_1935_NAME` variable to set unique service name
+* Make file`docker-compose.override.yml`
+* Open `docker-compose.override.yml` in editor and set open ports.
+Example:
+```
+lvkserver:
+  ports:
+    - "888:80"
+    - "1937:1935"
+```
+* Edit `SERVICE_1935_NAME` variable in `docker-compose.yml` file to set unique service name
 ```
   environment:
     -  SERVICE_1935_NAME=lvk_server_0
