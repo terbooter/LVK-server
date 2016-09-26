@@ -1,30 +1,43 @@
-"use strict";
-var http = require('http');
-var querystring = require('querystring');
-var allowedDomains = [];
-if (process.env["ALLOWED_DOMAINS"]) {
-    allowedDomains = process.env["ALLOWED_DOMAINS"].split(",");
-}
+/// <reference path="typings/index.d.ts" />
+import {IncomingMessage} from "http";
+import {ServerResponse} from "http";
+const http = require('http');
+const querystring = require('querystring');
+
+var allowedDomains: string[] = getAllowedDomains();
 console.log(allowedDomains);
-http.createServer(function (request, response) {
+
+http.createServer(handler).listen(80);
+
+function handler(request: IncomingMessage, response: ServerResponse) {
     var body = [];
-    request.on('error', function (err) {
+    request.on('error', (err)=> {
         console.error(err);
-    }).on('data', function (chunk) {
+    }).on('data', (chunk)=> {
         body.push(chunk);
-    }).on('end', function () {
+    }).on('end', ()=> {
         var str = Buffer.concat(body).toString();
-        var p = querystring.parse(str.toString());
+        var p = querystring.parse(str);
         if (canPlay(p)) {
             response.statusCode = 200;
-        }
-        else {
+        } else {
             response.statusCode = 500;
         }
         response.end();
     });
-}).listen(80);
+}
+
+function getAllowedDomains(): string[] {
+    if (process.env["ALLOWED_DOMAINS"]) {
+        return process.env["ALLOWED_DOMAINS"].split(",");
+    }
+
+    return [];
+}
+
+
 function canPlay(p) {
+
     /*
      https://github.com/arut/nginx-rtmp-module/wiki/Directives#on_play
      call=connect
@@ -34,28 +47,34 @@ function canPlay(p) {
      swfUrl - client swf url
      tcUrl - tcUrl
      pageUrl - client page url*/
-    console.log(p);
-    var swfurl = "";
+
+    var swfurl: string = "";
     if (p.swfurl) {
         swfurl = p.swfurl;
     }
+
     if (allowForLVK(swfurl) && allowForDomain(swfurl)) {
         return true;
     }
+
     console.log("CAN NOT PLAY !!!");
     return false;
 }
-function allowForLVK(swfUrl) {
+
+function allowForLVK(swfUrl: string) {
     var hasPlayerSubstring = swfUrl.indexOf("player.swf") != -1;
     var hasPublisherSubstring = swfUrl.indexOf("publisher.swf") != -1;
+
     if (hasPlayerSubstring || hasPublisherSubstring) {
         return true;
     }
+
+    console.log("Error. not allowed for not LVK swf");
     return false;
 }
-function allowForDomain(swfUrl) {
-    for (var _i = 0, allowedDomains_1 = allowedDomains; _i < allowedDomains_1.length; _i++) {
-        var domain = allowedDomains_1[_i];
+
+function allowForDomain(swfUrl: string) {
+    for (var domain of allowedDomains) {
         if (domain == "any") {
             return true;
         }

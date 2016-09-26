@@ -27,3 +27,9 @@ lvkserver:
 ```
 * Run `docker-compose up -d` will build docker image and start container in background
 * Watch stats by URL`http://xx.xx.xx.xx:888/stats`
+* **Optional** set allowed domain in `docker-compose.override.yml`
+```
+node:
+  environment:
+    -  ALLOWED_DOMAINS=localhost1,localhost
+```
