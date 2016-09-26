@@ -5,7 +5,7 @@ const http = require('http');
 const querystring = require('querystring');
 
 var allowedDomains: string[] = getAllowedDomains();
-console.log(allowedDomains);
+console.log("Allowed domains:" + allowedDomains);
 
 http.createServer(handler).listen(80);
 
@@ -17,8 +17,8 @@ function handler(request: IncomingMessage, response: ServerResponse) {
         body.push(chunk);
     }).on('end', ()=> {
         var str = Buffer.concat(body).toString();
-        var p = querystring.parse(str);
-        if (canPlay(p)) {
+        var postVars = querystring.parse(str);
+        if (canPlay(postVars)) {
             response.statusCode = 200;
         } else {
             response.statusCode = 500;
@@ -36,7 +36,7 @@ function getAllowedDomains(): string[] {
 }
 
 
-function canPlay(p) {
+function canPlay(postVars) {
 
     /*
      https://github.com/arut/nginx-rtmp-module/wiki/Directives#on_play
@@ -49,8 +49,8 @@ function canPlay(p) {
      pageUrl - client page url*/
 
     var swfurl: string = "";
-    if (p.swfurl) {
-        swfurl = p.swfurl;
+    if (postVars.swfurl) {
+        swfurl = postVars.swfurl;
     }
 
     if (allowForLVK(swfurl) && allowForDomain(swfurl)) {

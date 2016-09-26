@@ -1,12 +1,10 @@
 "use strict";
 var http = require('http');
 var querystring = require('querystring');
-var allowedDomains = [];
-if (process.env["ALLOWED_DOMAINS"]) {
-    allowedDomains = process.env["ALLOWED_DOMAINS"].split(",");
-}
-console.log(allowedDomains);
-http.createServer(function (request, response) {
+var allowedDomains = getAllowedDomains();
+console.log("Allowed domains:" + allowedDomains);
+http.createServer(handler).listen(80);
+function handler(request, response) {
     var body = [];
     request.on('error', function (err) {
         console.error(err);
@@ -14,8 +12,8 @@ http.createServer(function (request, response) {
         body.push(chunk);
     }).on('end', function () {
         var str = Buffer.concat(body).toString();
-        var p = querystring.parse(str.toString());
-        if (canPlay(p)) {
+        var postVars = querystring.parse(str);
+        if (canPlay(postVars)) {
             response.statusCode = 200;
         }
         else {
@@ -23,8 +21,14 @@ http.createServer(function (request, response) {
         }
         response.end();
     });
-}).listen(80);
-function canPlay(p) {
+}
+function getAllowedDomains() {
+    if (process.env["ALLOWED_DOMAINS"]) {
+        return process.env["ALLOWED_DOMAINS"].split(",");
+    }
+    return [];
+}
+function canPlay(postVars) {
     /*
      https://github.com/arut/nginx-rtmp-module/wiki/Directives#on_play
      call=connect
@@ -34,10 +38,9 @@ function canPlay(p) {
      swfUrl - client swf url
      tcUrl - tcUrl
      pageUrl - client page url*/
-    console.log(p);
     var swfurl = "";
-    if (p.swfurl) {
-        swfurl = p.swfurl;
+    if (postVars.swfurl) {
+        swfurl = postVars.swfurl;
     }
     if (allowForLVK(swfurl) && allowForDomain(swfurl)) {
         return true;
@@ -51,6 +54,7 @@ function allowForLVK(swfUrl) {
     if (hasPlayerSubstring || hasPublisherSubstring) {
         return true;
     }
+    console.log("Error. not allowed for not LVK swf");
     return false;
 }
 function allowForDomain(swfUrl) {
