@@ -8,6 +8,7 @@ lvkserver:
     max-file: "100"
   links:
     - node
+  restart: always
 
 node:
   build: ./nodejs
